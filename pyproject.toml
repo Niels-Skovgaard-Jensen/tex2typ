@@ -26,7 +26,7 @@ Homepage = "https://Niels-Skovgaard-Jensen.github.io/tex2typ/"
 Repository = "https://github.com/Niels-Skovgaard-Jensen/tex2typ"
 Documentation = "https://Niels-Skovgaard-Jensen.github.io/tex2typ/"
 
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
     "pytest>=7.2.0",
     "pre-commit>=2.20.0",
@@ -35,15 +35,14 @@ dev = [
     "mypy>=0.991",
     "pytest-cov>=4.0.0",
     "ruff>=0.6.9",
-
 ]
 
 [build-system]
-requires = ["setuptools >= 61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.setuptools]
-py-modules = ["tex2typ"]
+[tool.hatch.build.targets.wheel]
+packages = ["tex2typ"]
 
 [tool.mypy]
 files = ["tex2typ"]
@@ -115,3 +114,6 @@ skip_empty = true
 [tool.coverage.run]
 branch = true
 source = ["tex2typ"]
+
+[project.scripts]
+tex2typ = "tex2typ.__main__:main"
