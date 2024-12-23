@@ -1,4 +1,4 @@
-from tex2typ.foo import foo
+from tex2typ.__main__ import foo
 
 
 def test_foo():

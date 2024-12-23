@@ -17,6 +17,9 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+dependencies = [
+    "pypandoc>=1.14",
+]
 
 [project.urls]
 Homepage = "https://Niels-Skovgaard-Jensen.github.io/tex2typ/"
