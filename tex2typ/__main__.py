@@ -1,6 +1,8 @@
 import argparse
-import pypandoc
 import re
+
+import pypandoc
+
 
 def fix_bar_notation(typst_eq: str) -> str:
     """Replace x^(‾) with #bar(x) in Typst equations."""
@@ -21,23 +23,19 @@ def latex_to_typst(latex_equation: str) -> str:
         """
 
         # Convert using pypandoc
-        typst_output = pypandoc.convert_text(
-            latex_content, "typst", format="latex", extra_args=["--wrap=none"]
-        )
+        typst_output = pypandoc.convert_text(latex_content, "typst", format="latex", extra_args=["--wrap=none"])
 
         # Clean up the output and fix bar notation
         typst_equation = typst_output.strip()
         typst_equation = fix_bar_notation(typst_equation)
-        return typst_equation
-
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Error: {e!s}"
+    else:
+        return typst_equation
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Convert LaTeX equations to Typst format"
-    )
+    parser = argparse.ArgumentParser(description="Convert LaTeX equations to Typst format")
     parser.add_argument("equation", help="LaTeX equation to convert")
     args = parser.parse_args()
 
