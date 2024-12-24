@@ -19,8 +19,6 @@ uvx tex2typ <YourLaTeXEquation> <options>
 
 Example:
 
-Example:
-
 ```bash
 uvx tex2typ "\boldsymbol{H^i} = -\frac{1}{j\omega\mu_0}\nabla\times\boldsymbol{E^i}" -c
 ```
@@ -53,15 +51,15 @@ If using a virtual env or conda, run
 python -m tex2typ <YourEquation> <options>
 ```
 
-Where `-c` automatically copies the resulting typst equation to your clipboard and `-r` allows you to convert back from typst to latex.
+Where `-c` automatically copies the resulting typist equation to your clipboard, and `-r` allows you to convert back from typist to latex.
 
-Example: After activating virtual env and installing tex2typ run
+Example: After activating virtual env and installing tex2typ, run
 
 ```bash
 python -m tex2typ "\boldsymbol{H^i} = -\frac{1}{j\omega\mu_0}\nabla\times\boldsymbol{E^i}" -c
 ```
 
-Which will return and copy to clipboard:
+Which will return and copy to the clipboard:
 
 ```
 $ bold(H^i) = - frac(1, j omega mu_0) nabla times bold(E^i) $
@@ -69,7 +67,7 @@ $ bold(H^i) = - frac(1, j omega mu_0) nabla times bold(E^i) $
 
 ## Typst to LaTeX
 
-By providing the `-r` option, one can also convert back from typst to latex.
+By providing the `-r` option, one can convert from typst to latex.
 
 Example:
 
