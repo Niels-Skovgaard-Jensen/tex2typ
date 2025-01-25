@@ -1,55 +1,26 @@
 import argparse
-import re
 
-import pypandoc  # type: ignore[import-untyped]
 import pyperclip  # type: ignore[import-untyped]
 
-
-def fix_bar_notation(typst_eq: str) -> str:
-    """Replace x^(‾) with #bar(x) in Typst equations."""
-    # Pattern matches any character followed by ^(‾)
-    pattern = r"(\w+)\^\(‾\)"
-    return re.sub(pattern, r"overline(\1)", typst_eq)
+from tex2typ.mappings import LatexToTypstConverter, TypstToLatexConverter
 
 
 def latex_to_typst(latex_equation: str) -> str:
-    """Convert LaTeX equation to Typst equation using pandoc."""
+    """Convert LaTeX equation to Typst equation."""
     try:
-        # Create the LaTeX content with proper document structure
-        latex_content = f"""
-        \\documentclass{{article}}
-        \\begin{{document}}
-        $${latex_equation}$$
-        \\end{{document}}
-        """
-
-        # Convert using pypandoc
-        typst_output = pypandoc.convert_text(latex_content, "typst", format="latex", extra_args=["--wrap=none"])
-
-        # Clean up the output and fix bar notation
-        typst_equation: str = fix_bar_notation(typst_output.strip())
-        typst_equation = typst_equation.replace("$", "").strip(" ")
+        converter = LatexToTypstConverter()
+        return converter.convert(latex_equation)
     except Exception as e:
         return f"Error: {e!s}"
-    else:
-        return typst_equation
 
 
 def typst_to_latex(typst_equation: str) -> str:
-    """Convert Typst equation to LaTeX equation using pandoc."""
+    """Convert Typst equation to LaTeX equation."""
     try:
-        # Create the Typst content
-        typst_content = f"{typst_equation}"
-
-        # Convert using pypandoc
-        latex_output = pypandoc.convert_text(typst_content, "latex", format="typst", extra_args=["--wrap=none"])
-
-        # Clean up the output
-        latex_equation: str = latex_output
+        converter = TypstToLatexConverter()
+        return converter.convert(typst_equation)
     except Exception as e:
         return f"Error: {e!s}"
-    else:
-        return latex_equation
 
 
 def main() -> None:

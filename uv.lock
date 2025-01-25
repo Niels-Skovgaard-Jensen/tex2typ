@@ -299,15 +299,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pypandoc"
-version = "1.14"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/3a/76/4813088c2df396b562a944887ec42983f268b75091c03b48bdaf657a7229/pypandoc-1.14.tar.gz", hash = "sha256:6b4c45f5f1b9fb5bb562079164806bdbbc3e837b5402bcf3f1139edc5730a197", size = 32742 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/bd/cf1dd70b95f3366f3c457c5259ed8f032122210441407b6ed281d7fcbb8c/pypandoc-1.14-py3-none-any.whl", hash = "sha256:1315c7ad7fac7236dacf69a05b521ed2c3f1d0177f70e9b92bfffce6c023df22", size = 21266 },
-]
-
-[[package]]
 name = "pyperclip"
 version = "1.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -452,7 +443,6 @@ name = "tex2typ"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [
-    { name = "pypandoc" },
     { name = "pyperclip" },
 ]
 
@@ -468,10 +458,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "pypandoc", specifier = ">=1.14" },
-    { name = "pyperclip", specifier = ">=1.9.0" },
-]
+requires-dist = [{ name = "pyperclip", specifier = ">=1.9.0" }]
 
 [package.metadata.requires-dev]
 dev = [
