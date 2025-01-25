@@ -28,6 +28,7 @@ def latex_to_typst(latex_equation: str) -> str:
 
         # Clean up the output and fix bar notation
         typst_equation: str = fix_bar_notation(typst_output.strip())
+        typst_equation = typst_equation.replace("$", "").strip(" ")
     except Exception as e:
         return f"Error: {e!s}"
     else:
@@ -52,7 +53,11 @@ def typst_to_latex(typst_equation: str) -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Convert equations between LaTeX and Typst formats")
+    parser = argparse.ArgumentParser(
+        description="Convert equations between LaTeX and Typst formats",
+        prefix_chars="-",
+        allow_abbrev=True,
+    )
     parser.add_argument("equation", help="Equation to convert")
     parser.add_argument("-c", "--copy", action="store_true", help="Copy result to clipboard (requires pyperclip)")
     parser.add_argument(
