@@ -37,7 +37,9 @@ def latex_to_typst(latex_equation: str) -> str:
         """
 
         # Convert using pypandoc
-        typst_output = pypandoc.convert_text(latex_content, "typst", format="latex", extra_args=["--wrap=none"])
+        typst_output = pypandoc.convert_text(
+            latex_content, "typst", format="latex", extra_args=["--wrap=none"]
+        )
 
         # Clean up the output and fix bar notation
         typst_equation: str = fix_bar_notation(typst_output.strip())
@@ -62,14 +64,13 @@ def typst_to_latex(typst_equation: str) -> str:
         typst_content = f"{typst_equation}"
 
         # Convert using pypandoc
-        latex_output = pypandoc.convert_text(typst_content, "latex", format="typst", extra_args=["--wrap=none"])
-
-        # Clean up the output
-        latex_equation: str = latex_output
+        latex_output: str = pypandoc.convert_text(
+            typst_content, "latex", format="typst", extra_args=["--wrap=none"]
+        )
     except Exception as e:
         return f"Error: {e!s}"
     else:
-        return latex_equation
+        return latex_output
 
 
 def copy_image_to_clipboard(image: Image.Image) -> bool:
@@ -94,7 +95,9 @@ def copy_image_to_clipboard(image: Image.Image) -> bool:
         set the clipboard to theImage
         '''
 
-        result = subprocess.run(["osascript", "-e", script], capture_output=True, text=True)
+        result = subprocess.run(
+            ["osascript", "-e", script], capture_output=True, text=True
+        )
 
         # Clean up temporary file
         tmp_path.unlink()
@@ -124,7 +127,9 @@ def save_image_to_file(image: Image.Image, output_path: Path) -> bool:
         return True
 
 
-def typst_to_image(typst_equation: str, save_path: Path | None = None, dpi: int = 300) -> tuple[bool, str]:
+def typst_to_image(
+    typst_equation: str, save_path: Path | None = None, dpi: int = 300
+) -> tuple[bool, str]:
     """Convert Typst equation to image and copy to clipboard.
 
     Args:
@@ -164,18 +169,18 @@ def typst_to_image(typst_equation: str, save_path: Path | None = None, dpi: int 
         return False, f"Error: {e!s}"
 
 
-def main() -> str:
-    """Process Typst equations and generate images.
+def setup_argument_parser() -> argparse.ArgumentParser:
+    """Create and configure the argument parser.
 
     Returns:
-        The status message.
+        The configured argument parser.
     """
     parser = argparse.ArgumentParser(
-        description="Generate images from Typst equations",
+        description="Convert equations and generate images",
         prefix_chars="-",
         allow_abbrev=True,
     )
-    parser.add_argument("equation", help="Typst equation to process")
+    parser.add_argument("equation", help="Equation to process")
     parser.add_argument(
         "-t",
         "--time",
@@ -210,12 +215,76 @@ def main() -> str:
         help="Image resolution in dots per inch (default: 300)",
         default=300,
     )
+    parser.add_argument(
+        "-r",
+        "--reverse",
+        action="store_true",
+        help="Convert from Typst to LaTeX (default is LaTeX to Typst)",
+        default=False,
+    )
+    return parser
+
+
+def convert_equation(args: argparse.Namespace) -> str:
+    """Convert equation between LaTeX and Typst formats.
+
+    Args:
+        args: Parsed command line arguments
+
+    Returns:
+        The converted equation or error message
+    """
+    return (
+        typst_to_latex(args.equation) if args.reverse else latex_to_typst(args.equation)
+    )
+
+
+def process_image_generation(typst_eq: str, args: argparse.Namespace) -> str:
+    """Process image generation request.
+
+    Args:
+        typst_eq: The Typst equation to convert to image
+        args: Parsed command line arguments
+
+    Returns:
+        Status message
+    """
+    save_path = Path(args.save_image) if args.save_image else None
+    success, message = typst_to_image(typst_eq, save_path, dpi=args.dpi)
+    if not success:
+        return message
+    return message
+
+
+def main() -> str:
+    """Process equations: convert between LaTeX and Typst, generate images.
+
+    Returns:
+        The status message or converted equation.
+    """
+    parser = setup_argument_parser()
     args = parser.parse_args()
 
     start_time = time.perf_counter() if args.time else None
 
+    # Convert between formats if no image generation is requested
+    if not (args.image or args.save_image):
+        result = convert_equation(args)
+        if args.time:
+            end_time = time.perf_counter()
+            elapsed_ms = (end_time - start_time) * 1000  # type: ignore[operator]
+            print(f"Processing time: {elapsed_ms:.2f} ms")
+        return result
+
+    # For image generation, ensure equation is in Typst format
+    if not args.reverse:
+        typst_eq = latex_to_typst(args.equation)
+        if typst_eq.startswith("Error"):
+            return typst_eq
+    else:
+        typst_eq = args.equation
+
     # Ensure equation is wrapped in math mode
-    typst_eq = args.equation
     if not typst_eq.strip().startswith("$"):
         typst_eq = f"$ {typst_eq} $"
 
@@ -228,11 +297,7 @@ def main() -> str:
 
     result_message = "Equation processed successfully"
     if args.image or args.save_image:
-        save_path = Path(args.save_image) if args.save_image else None
-        success, message = typst_to_image(typst_eq, save_path, dpi=args.dpi)
-        result_message = message
-        if not success:
-            return message
+        result_message = process_image_generation(typst_eq, args)
 
     if args.time:
         end_time = time.perf_counter()

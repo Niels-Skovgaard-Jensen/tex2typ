@@ -14,9 +14,18 @@ def test_bar_notation():
 @pytest.mark.parametrize(
     "cli_args,expected_calls",
     [
-        (["tex2typ", "x^2"], {"equation": "x^2", "copy": False, "reverse": False, "time": False}),
-        (["tex2typ", "x^2", "-c"], {"equation": "x^2", "copy": True, "reverse": False, "time": False}),
-        (["tex2typ", "x^2", "-r"], {"equation": "x^2", "copy": False, "reverse": True, "time": False}),
+        (
+            ["tex2typ", "x^2"],
+            {"equation": "x^2", "copy": False, "reverse": False, "time": False},
+        ),
+        (
+            ["tex2typ", "x^2", "-c"],
+            {"equation": "x^2", "copy": True, "reverse": False, "time": False},
+        ),
+        (
+            ["tex2typ", "x^2", "-r"],
+            {"equation": "x^2", "copy": False, "reverse": True, "time": False},
+        ),
     ],
 )
 def test_cli_argument_parsing(cli_args, expected_calls):

@@ -1,4 +1,4 @@
-#set page(width: 100pt, height: auto, margin: 5pt)
-#set text(size: 10pt)
+#set page(width: auto, height: auto, margin: 8pt)
+#set text(size: 14pt)
 
 ${EQUATION}
