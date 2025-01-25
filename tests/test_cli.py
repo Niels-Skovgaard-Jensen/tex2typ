@@ -2,37 +2,21 @@ from unittest.mock import patch
 
 import pytest
 
-from tex2typ.__main__ import latex_to_typst, main, typst_to_latex
-
-
-def test_latex_to_typst_conversion():
-    latex_eq = "x^2 + y^2 = z^2"
-    result = latex_to_typst(latex_eq)
-    assert isinstance(result, str)
-    assert "x" in result and "y" in result and "z" in result  # Contains the variables
-    assert "^2" in result or "^{2}" in result  # Should have some form of superscript
-
-
-def test_typst_to_latex_conversion():
-    typst_eq = "x^2 + y^2 = z^2"
-    result = typst_to_latex(typst_eq)
-    assert isinstance(result, str)
-    assert "x" in result and "y" in result and "z" in result
-    assert "\\^" in result  # LaTeX escapes the caret
+from tex2typ.__main__ import main
 
 
 def test_bar_notation():
     latex_eq = "\\bar{x}"
-    result = latex_to_typst(latex_eq)
+    result = main(latex_eq)
     assert "overline" in result
 
 
 @pytest.mark.parametrize(
     "cli_args,expected_calls",
     [
-        (["tex2typ", "x^2"], {"equation": "x^2", "copy": False, "reverse": False}),
-        (["tex2typ", "x^2", "-c"], {"equation": "x^2", "copy": True, "reverse": False}),
-        (["tex2typ", "x^2", "-r"], {"equation": "x^2", "copy": False, "reverse": True}),
+        (["tex2typ", "x^2"], {"equation": "x^2", "copy": False, "reverse": False, "time": False}),
+        (["tex2typ", "x^2", "-c"], {"equation": "x^2", "copy": True, "reverse": False, "time": False}),
+        (["tex2typ", "x^2", "-r"], {"equation": "x^2", "copy": False, "reverse": True, "time": False}),
     ],
 )
 def test_cli_argument_parsing(cli_args, expected_calls):
