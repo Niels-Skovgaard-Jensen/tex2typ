@@ -1,13 +1,17 @@
-from unittest.mock import patch
+from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from tex2typ.__main__ import main
+from tex2typ.equation_converter import EquationConverter
 
 
 def test_bar_notation():
+    """Test that bar notation is correctly converted."""
+    converter = EquationConverter()
     latex_eq = "\\bar{x}"
-    result = main(latex_eq)
+    result = converter.latex_to_typst(latex_eq)
     assert "overline" in result
 
 
@@ -28,27 +32,59 @@ def test_bar_notation():
         ),
     ],
 )
-def test_cli_argument_parsing(cli_args, expected_calls):
-    with (
-        patch("argparse.ArgumentParser.parse_args") as mock_args,
-        patch("tex2typ.__main__.latex_to_typst") as mock_l2t,
-        patch("tex2typ.__main__.typst_to_latex") as mock_t2l,
-        patch("pyperclip.copy") as mock_copy,
-    ):
-        # Configure the mock arguments
-        mock_args.return_value = type("Args", (), expected_calls)
+def test_cli_argument_parsing(cli_args, expected_calls, monkeypatch):
+    """Test CLI argument parsing and corresponding function calls."""
+    with patch("sys.argv", cli_args):
+        # Create a mock converter
+        mock_converter = MagicMock()
+        mock_converter.convert.return_value = "converted_equation"
 
-        # Run the main function
-        main()
+        # Create a mock converter class
+        mock_converter_class = MagicMock(return_value=mock_converter)
 
-        # Verify the correct conversion function was called
-        if expected_calls["reverse"]:
-            mock_t2l.assert_called_once_with(expected_calls["equation"])
-        else:
-            mock_l2t.assert_called_once_with(expected_calls["equation"])
+        # Patch the EquationConverter class where it's imported
+        with patch("tex2typ.__main__.EquationConverter", mock_converter_class):
+            # Run the main function
+            result = main()
 
-        # Verify clipboard usage
-        if expected_calls["copy"]:
-            assert mock_copy.called
-        else:
-            assert not mock_copy.called
+            # Verify the converter was called with correct arguments
+            mock_converter.convert.assert_called_once_with(
+                expected_calls["equation"],
+                to_latex=expected_calls["reverse"],
+                copy_to_clipboard=expected_calls["copy"],
+            )
+
+            assert result == "converted_equation"
+
+
+def test_image_generation():
+    """Test image generation functionality."""
+    cli_args = ["tex2typ", "x^2", "-i", "-s", "test.png"]
+    with patch("sys.argv", cli_args):
+        # Create mock converter
+        mock_converter = MagicMock()
+        mock_converter.latex_to_typst.return_value = "converted_equation"
+        mock_converter_class = MagicMock(return_value=mock_converter)
+
+        # Create mock image generator
+        mock_img_gen = MagicMock()
+        mock_img_gen.typst_to_image.return_value = (
+            True,
+            "Image generated successfully",
+        )
+        mock_img_gen_class = MagicMock(return_value=mock_img_gen)
+
+        # Patch both classes where they're imported
+        with (
+            patch("tex2typ.__main__.EquationConverter", mock_converter_class),
+            patch("tex2typ.__main__.ImageGenerator", mock_img_gen_class),
+        ):
+            # Run the main function
+            result = main()
+
+            # Verify the conversion and image generation were called
+            mock_converter.latex_to_typst.assert_called_once_with("x^2")
+            mock_img_gen.typst_to_image.assert_called_once_with(
+                "$ converted_equation $", Path("test.png"), dpi=300
+            )
+            assert result == "Image generated successfully"
