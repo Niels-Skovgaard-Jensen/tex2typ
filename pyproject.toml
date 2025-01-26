@@ -20,6 +20,7 @@ classifiers = [
 dependencies = [
     "pypandoc>=1.14",
     "Pillow>=10.0.0",
+    "pyperclip>=1.9.0",
 ]
 
 [project.urls]

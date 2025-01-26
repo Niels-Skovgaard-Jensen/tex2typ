@@ -222,6 +222,13 @@ def setup_argument_parser() -> argparse.ArgumentParser:
         help="Convert from Typst to LaTeX (default is LaTeX to Typst)",
         default=False,
     )
+    parser.add_argument(
+        "-c",
+        "--copy",
+        action="store_true",
+        help="Copy converted equation to clipboard",
+        default=False,
+    )
     return parser
 
 
@@ -234,9 +241,15 @@ def convert_equation(args: argparse.Namespace) -> str:
     Returns:
         The converted equation or error message
     """
-    return (
+    result = (
         typst_to_latex(args.equation) if args.reverse else latex_to_typst(args.equation)
     )
+    if args.copy and not result.startswith("Error"):
+        import pyperclip  # type: ignore[import-untyped]
+
+        pyperclip.copy(result)
+        print("Result copied to clipboard!")
+    return result
 
 
 def process_image_generation(typst_eq: str, args: argparse.Namespace) -> str:
