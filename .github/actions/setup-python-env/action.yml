@@ -32,6 +32,8 @@ runs:
     - name: Install Typst
       run:
         curl -fsSL https://typst.community/typst-install/install.sh | sh
+        echo 'export TYPST_INSTALL="/home/runner/.typst"' >> ~/.bashrc
+        echo 'export PATH="$TYPST_INSTALL/bin:$PATH"' >> ~/.bashrc
       shell: bash
 
     - name: Install Pandoc
