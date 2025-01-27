@@ -31,8 +31,7 @@ runs:
 
     - name: Install Typst
       run:
-        curl -L https://github.com/typst/typst/releases/latest/download/typst-linux-x86_64.tar.xz | tar -xJ
-        sudo mv typst /usr/local/bin/
+        curl -fsSL https://typst.community/typst-install/install.sh | sh
       shell: bash
 
     - name: Install Pandoc
