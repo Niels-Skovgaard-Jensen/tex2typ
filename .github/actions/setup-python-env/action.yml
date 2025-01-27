@@ -29,6 +29,12 @@ runs:
       run: uv sync --frozen
       shell: bash
 
+    - name: Install Typst
+      run:
+        curl -L https://github.com/typst/typst/releases/latest/download/typst-linux-x86_64.tar.xz | tar -xJ
+        sudo mv typst /usr/local/bin/
+      shell: bash
+
     - name: Install Pandoc
       run: uv run python -c "import pypandoc; pypandoc.download_pandoc()"
       shell: bash
