@@ -11,9 +11,6 @@
 
 A Python CLI tool for converting LaTeX equations into Typst equations and back
 
-- **Github repository**: <https://github.com/Niels-Skovgaard-Jensen/tex2typ/>
-- **Documentation** <https://Niels-Skovgaard-Jensen.github.io/tex2typ/>
-
 ## Quick start as a `uv tool` (recommended)
 
 ```bash
@@ -34,16 +31,17 @@ $ bold(H^i) = - frac(1, j omega mu_0) nabla times bold(E^i) $
 
 ## Installation
 
-With uv:
+tex2typ requires Pandoc and Typst to be installed
 
+- Pandoc installation:
+https://pandoc.org/installing.html
+- Typst installation:
+https://github.com/typst/typst
+
+tex2typ is hosted on PyPI and can be installed through uv or pip. We recommend using it as a uvx tool:
+uv:
 ```bash
-uv add tex2typ
-```
-
-With pip in venv or conda:
-
-```bash
-pip install tex2typ
+uvx tex2typ
 ```
 
 # Running CLI
@@ -51,29 +49,24 @@ pip install tex2typ
 If using a virtual env or conda, run
 
 ```bash
-python -m tex2typ <YourEquation> <options>
+uvx tex2typ <YourEquation> <options>
 ```
 
-Where `-c` automatically copies the resulting typist equation to your clipboard, and `-r` allows you to convert back from typist to latex.
+Where `-c` automatically copies the resulting Typst equation to your clipboard, and `-r` allows you to convert back from Typst to LaTeX.
 
-Example: After activating virtual env and installing tex2typ, run
-
+Example:
 ```bash
-python -m tex2typ "\boldsymbol{H^i} = -\frac{1}{j\omega\mu_0}\nabla\times\boldsymbol{E^i}" -c
+uvx tex2typ "\boldsymbol{H^i} = -\frac{1}{j\omega\mu_0}\nabla\times\boldsymbol{E^i}" -c
 ```
-
 Which will return and copy to the clipboard:
-
 ```
 $ bold(H^i) = - frac(1, j omega mu_0) nabla times bold(E^i) $
 ```
 
 ## Typst to LaTeX
 
-By providing the `-r` option, one can convert from typst to latex.
-
+By providing the `-r` option, one can convert from typst to LaTeX.
 Example:
-
 ```bash
 uvx run tex2typ "bold(H^i) = - frac(1, j omega mu_0) nabla times bold(E^i)" -r
 ```
@@ -88,3 +81,6 @@ Options:
 
 - `-c` or `--copy`: Copy the result to your clipboard
 - `-r` or `--reverse`: Convert from Typst to LaTeX (default is LaTeX to Typst)
+
+
+
