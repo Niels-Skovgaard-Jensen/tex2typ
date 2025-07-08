@@ -40,7 +40,8 @@ runs:
         
         # Extract and install
         tar -xf typst.tar.xz
-        sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
+        chmod +x typst-x86_64-unknown-linux-musl/typst
+        mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
         
         # Clean up
         rm -rf typst.tar.xz typst-x86_64-unknown-linux-musl/
