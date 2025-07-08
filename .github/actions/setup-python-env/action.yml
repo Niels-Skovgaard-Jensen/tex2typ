@@ -30,10 +30,42 @@ runs:
       shell: bash
 
     - name: Install Typst
-      run:
-        curl -fsSL https://typst.community/typst-install/install.sh | sh
-        echo 'export TYPST_INSTALL="/home/runner/.typst"' >> ~/.bashrc
-        echo 'export PATH="$TYPST_INSTALL/bin:$PATH"' >> ~/.bashrc
+      run: |
+        set -e
+
+        # Download and install Typst from GitHub releases
+        TYPST_VERSION=$(curl -s https://api.github.com/repos/typst/typst/releases/latest | grep '"tag_name"' | cut -d'"' -f4 | sed 's/^v//')
+        echo "Installing Typst version: $TYPST_VERSION"
+
+        if [ -z "$TYPST_VERSION" ]; then
+          echo "Error: Could not determine Typst version"
+          exit 1
+        fi
+
+        # Download the Linux x86_64 binary
+        echo "Downloading Typst binary..."
+        curl -fsSL "https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-x86_64-unknown-linux-musl.tar.xz" -o typst.tar.xz
+
+        # Extract and install
+        echo "Extracting archive..."
+        tar -xf typst.tar.xz
+
+        echo "Setting permissions..."
+        chmod +x typst-x86_64-unknown-linux-musl/typst
+
+        echo "Installing to /usr/local/bin..."
+        ls -la /usr/local/bin/ || echo "/usr/local/bin/ does not exist"
+        mkdir -p /usr/local/bin
+        mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
+
+        # Clean up
+        echo "Cleaning up..."
+        rm -rf typst.tar.xz typst-x86_64-unknown-linux-musl/
+
+        # Verify installation
+        echo "Verifying installation..."
+        which typst
+        typst --version
       shell: bash
 
     - name: Install Pandoc
