@@ -30,10 +30,23 @@ runs:
       shell: bash
 
     - name: Install Typst
-      run:
-        curl -fsSL https://typst.community/typst-install/install.sh | sh
-        echo 'export TYPST_INSTALL="/home/runner/.typst"' >> ~/.bashrc
-        echo 'export PATH="$TYPST_INSTALL/bin:$PATH"' >> ~/.bashrc
+      run: |
+        # Download and install Typst from GitHub releases
+        TYPST_VERSION=$(curl -s https://api.github.com/repos/typst/typst/releases/latest | grep '"tag_name"' | cut -d'"' -f4 | sed 's/^v//')
+        echo "Installing Typst version: $TYPST_VERSION"
+        
+        # Download the Linux x86_64 binary
+        curl -fsSL "https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-x86_64-unknown-linux-musl.tar.xz" -o typst.tar.xz
+        
+        # Extract and install
+        tar -xf typst.tar.xz
+        sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
+        
+        # Clean up
+        rm -rf typst.tar.xz typst-x86_64-unknown-linux-musl/
+        
+        # Verify installation
+        typst --version
       shell: bash
 
     - name: Install Pandoc
