@@ -1,6 +1,5 @@
 # tex2typ
 
-
 [![Release](https://img.shields.io/github/v/release/Niels-Skovgaard-Jensen/tex2typ)](https://img.shields.io/github/v/release/Niels-Skovgaard-Jensen/tex2typ)
 [![Build status](https://img.shields.io/github/actions/workflow/status/Niels-Skovgaard-Jensen/tex2typ/main.yml?branch=main)](https://github.com/Niels-Skovgaard-Jensen/tex2typ/actions/workflows/main.yml?query=branch%3Amain)
 [![codecov](https://codecov.io/gh/Niels-Skovgaard-Jensen/tex2typ/branch/main/graph/badge.svg)](https://codecov.io/gh/Niels-Skovgaard-Jensen/tex2typ)

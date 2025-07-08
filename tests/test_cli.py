@@ -10,9 +10,10 @@ from tex2typ.equation_converter import EquationConverter
 def test_bar_notation():
     """Test that bar notation is correctly converted."""
     converter = EquationConverter()
-    latex_eq = "\\bar{x}"
+    latex_eq = r"\bar{x}"
     result = converter.latex_to_typst(latex_eq)
-    assert "overline" in result
+    # Different Pandoc versions may produce different output
+    assert "overline" in result or "macron" in result
 
 
 @pytest.mark.parametrize(
