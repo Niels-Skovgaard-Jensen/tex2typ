@@ -44,8 +44,15 @@ def setup_argument_parser() -> argparse.ArgumentParser:
         "-s",
         "--save-image",
         type=str,
-        help="Save the generated image to the specified path",
+        help="Save the generated image to the specified path (.png or .svg)",
         default=None,
+    )
+    parser.add_argument(
+        "-T",
+        "--transparent",
+        action="store_true",
+        help="Render the image with a transparent background",
+        default=False,
     )
     parser.add_argument(
         "--dpi",
@@ -97,7 +104,13 @@ def process_image_generation(typst_eq: str, args: argparse.Namespace) -> str:
     """
     save_path = Path(args.save_image) if args.save_image else None
     image_generator = ImageGenerator()
-    success, message = image_generator.typst_to_image(typst_eq, save_path, dpi=args.dpi)
+    success, message = image_generator.typst_to_image(
+        typst_eq,
+        save_path,
+        dpi=args.dpi,
+        transparent=args.transparent,
+        copy=args.image,
+    )
     if not success:
         return message
     return message
