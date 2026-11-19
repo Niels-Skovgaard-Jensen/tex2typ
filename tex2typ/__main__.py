@@ -1,4 +1,5 @@
 import argparse
+import sys
 import time
 from pathlib import Path
 
@@ -168,5 +169,13 @@ def main() -> str:
     return result_message
 
 
+def cli() -> int:
+    """Console entry point: print the result and return a process exit code."""
+    result = main()
+    print(result)
+    failed = result.startswith("Error") or "Failed" in result
+    return 1 if failed else 0
+
+
 if __name__ == "__main__":
-    print(main())
+    sys.exit(cli())

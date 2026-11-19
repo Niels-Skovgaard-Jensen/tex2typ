@@ -120,4 +120,4 @@ branch = true
 source = ["tex2typ"]
 
 [project.scripts]
-tex2typ = "tex2typ.__main__:main"
+tex2typ = "tex2typ.__main__:cli"

@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from PIL import Image
 
-from tex2typ.__main__ import main
+from tex2typ.__main__ import cli, main
 from tex2typ.equation_converter import EquationConverter
 from tex2typ.image_generator import ImageGenerator
 
@@ -118,3 +118,13 @@ def test_save_png_transparency(tmp_path, transparent, alpha):
     )
     assert ok
     assert Image.open(out).convert("RGBA").getpixel((0, 0))[3] == alpha
+
+
+@pytest.mark.parametrize(
+    ("message", "code"),
+    [("$ x $", 0), ("Error: bad", 1), ("Failed to copy image to clipboard", 1)],
+)
+def test_cli_exit_code(message, code, capsys):
+    with patch("tex2typ.__main__.main", return_value=message):
+        assert cli() == code
+    assert capsys.readouterr().out.strip() == message
