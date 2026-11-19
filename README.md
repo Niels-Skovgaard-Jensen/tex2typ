@@ -83,3 +83,12 @@ Options:
 
 
 
+- `-i` or `--image`: Render the equation and copy it to your clipboard as a PNG image
+- `-s` or `--save-image <path>`: Save the rendered equation to a file; use a `.svg` extension for SVG, otherwise PNG
+- `-T` or `--transparent`: Render the image with a transparent background (PNG and SVG)
+- `--dpi <n>`: Resolution for PNG images (default: 300)
+
+Example (transparent SVG):
+```bash
+uvx tex2typ "\frac{a}{b}" -s equation.svg -T
+```

@@ -1,10 +1,13 @@
+import shutil
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+from PIL import Image
 
 from tex2typ.__main__ import main
 from tex2typ.equation_converter import EquationConverter
+from tex2typ.image_generator import ImageGenerator
 
 
 def test_bar_notation():
@@ -86,6 +89,32 @@ def test_image_generation():
             # Verify the conversion and image generation were called
             mock_converter.latex_to_typst.assert_called_once_with("x^2")
             mock_img_gen.typst_to_image.assert_called_once_with(
-                "$ converted_equation $", Path("test.png"), dpi=300
+                "$ converted_equation $",
+                Path("test.png"),
+                dpi=300,
+                transparent=False,
+                copy=True,
             )
             assert result == "Image generated successfully"
+
+
+typst_available = shutil.which("typst") is not None
+
+
+@pytest.mark.skipif(not typst_available, reason="typst not installed")
+def test_save_svg(tmp_path):
+    out = tmp_path / "eq.svg"
+    ok, _ = ImageGenerator().typst_to_image("$ x^2 $", out, copy=False)
+    assert ok
+    assert "<svg" in out.read_text()
+
+
+@pytest.mark.skipif(not typst_available, reason="typst not installed")
+@pytest.mark.parametrize(("transparent", "alpha"), [(True, 0), (False, 255)])
+def test_save_png_transparency(tmp_path, transparent, alpha):
+    out = tmp_path / "eq.png"
+    ok, _ = ImageGenerator().typst_to_image(
+        "$ x^2 $", out, transparent=transparent, copy=False
+    )
+    assert ok
+    assert Image.open(out).convert("RGBA").getpixel((0, 0))[3] == alpha
